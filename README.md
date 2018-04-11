@@ -10,13 +10,49 @@ structures hold pointers to each other.
 The NIF defines two structs, `child_t` and `parent_t`.  A `parent_t`
 holds a pointer to an instance of `child_t`.
 
+``` c
+typedef struct child {
+  int num;
+} child_t;
+
+typedef struct parent {
+  child_t* child;
+} parent_t;
+```
+
 When `foo::parent_t_init(Child)` is called, `enif_keep_resource` is
 called on the child so that it will not be freed while the parent is
 still alive.
 
+``` c
+static ERL_NIF_TERM
+foo_parent_t_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+
+<snip>
+
+  parent = enif_alloc_resource(PARENT_T_RESOURCE_TYPE, sizeof(parent_t));
+  parent->child = child;
+  enif_keep_resource(child);
+
+<snip>
+
+}
+```
+
 When the `parent_t` is freed, `enif_release_resource` is called on the
 child so that it can be freed (if no one else has a reference still
 keeping it alive.)
+
+``` c
+static void
+free_parent_t(ErlNifEnv* env, void* obj) {
+  <snip>
+
+  enif_release_resource(parent->child);
+
+  <snip>
+}
+```
 
 The `free_child_t` and `free_parent_t` functions do NOT call
 `enif_free`.  That is only required if the memory was allocated with
