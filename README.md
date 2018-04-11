@@ -1,7 +1,7 @@
-# Erlang NIF Resource Demo
+\0;95;0c# Erlang NIF Resource Demo
 
 Demonstrates how to use `enif_keep_resource` and
-`enif_release_resource` to manage resource types who underlying `C`
+`enif_release_resource` to manage resource types whose underlying `C`
 structures hold pointers to each other.
 
 
