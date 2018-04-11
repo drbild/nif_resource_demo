@@ -5,7 +5,7 @@ Demonstrates how to use `enif_keep_resource` and
 structures hold pointers to each other.
 
 
-### Explanatnion
+### Explanation
 
 The NIF defines two structs, `child_t` and `parent_t`.  A `parent_t`
 holds a pointer to an instance of `child_t`.
