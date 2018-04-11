@@ -27,15 +27,22 @@ still alive.
 ``` c
 static ERL_NIF_TERM
 foo_parent_t_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+  child_t *child;
+  parent_t *parent;
 
-<snip>
+  <snip>
+
+  if (argc != 1 || !enif_get_resource(env, argv[0], CHILD_T_RESOURCE_TYPE, (void**)&child)) {
+    return enif_make_badarg(env);
+  }
+
+  <snip>
 
   parent = enif_alloc_resource(PARENT_T_RESOURCE_TYPE, sizeof(parent_t));
   parent->child = child;
   enif_keep_resource(child);
 
-<snip>
-
+  <snip>
 }
 ```
 
@@ -46,6 +53,8 @@ keeping it alive.)
 ``` c
 static void
 free_parent_t(ErlNifEnv* env, void* obj) {
+  parent_t* parent = (parent_t*) obj;
+
   <snip>
 
   enif_release_resource(parent->child);
